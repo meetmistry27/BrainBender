@@ -1,6 +1,7 @@
 import {Router} from "express";
 const router = Router();
 //import Leaderboard from '../models/leaderboardModel.js';
+
 import { getLeaderboardEntryById } from "../controllers/leaderboardController.js";
 import { createLeaderboardEntry } from "../controllers/leaderboardController.js";
 import { deleteLeaderboardEntryById } from "../controllers/leaderboardController.js";
@@ -10,7 +11,7 @@ import { getAllLeaderboardEntries } from "../controllers/leaderboardController.j
 router.get('/get', getAllLeaderboardEntries);
 
 // GET a leaderboard entry by ID
-router.get('/get/:id', getLeaderbohttps://github.com/meetmistry27/BrainBenderardEntryById);
+router.get('/get/:id', getLeaderboardEntryById);
 
 // POST a new leaderboard entry
 router.post('/create', createLeaderboardEntry);
