@@ -1,25 +1,29 @@
-import {Router} from "express";
-//import User from '../models/usersModel.js';
-import { createUser } from "../controllers/userController.js";
-import { getAllUsers } from "../controllers/userController.js";
-import { getUserById } from "../controllers/userController.js";
-import { updateUserById } from "../controllers/userController.js";
-import { deleteUserById } from "../controllers/userController.js";
+import { Router } from "express";
+import { 
+    createUser, 
+    getAllUsers, 
+    getUserById, 
+    updateUserById, 
+    deleteUserById 
+} from "../controllers/userController.js";
+import { validateUserCreation, validateUserUpdate } from "../middleware/validationMiddleware.js";
+import { handleErrors } from "../middleware/errorMiddleware.js";
+
 const router = Router();
 
 // GET all users
-router.get('/get', getAllUsers);
+router.get('/get', handleErrors(getAllUsers));
 
 // GET a user by ID
-router.get('/get/:id', getUserById);
+router.get('/get/:id', handleErrors(getUserById));
 
 // POST a new user
-router.post('/create', createUser); 
+router.post('/create', validateUserCreation, handleErrors(createUser)); 
 
 // PUT (update) a user by ID
-router.put('/update/:id', updateUserById);
+router.put('/update/:id', validateUserUpdate, handleErrors(updateUserById));
 
 // DELETE a user by ID
-router.delete('/delete/:id', deleteUserById);
+router.delete('/delete/:id', handleErrors(deleteUserById));
 
 export default router;

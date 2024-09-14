@@ -11,6 +11,7 @@ import quizRoutes from './routes/quizRoutes.js';
 import quizTakeRoutes from './routes/quizTakeRoutes.js';
 import leaderboardRoutes from './routes/leaderboardRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import { handleErrors } from "./middleware/errorMiddleware.js";
 
 // Middleware
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use('/quiz-takes', quizTakeRoutes);
 app.use('/leaderboards', leaderboardRoutes);
 app.use('/analytics', analyticsRoutes);
 
+app.use(handleErrors);
 //router.post('/createuser',createUser);
 
 

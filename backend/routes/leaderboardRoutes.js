@@ -1,25 +1,29 @@
-import {Router} from "express";
-const router = Router();
-//import Leaderboard from '../models/leaderboardModel.js';
+import { Router } from 'express';
+import { 
+    getAllLeaderboardEntries, 
+    getLeaderboardEntryById, 
+    createLeaderboardEntry, 
+    updateLeaderboardEntryById, 
+    deleteLeaderboardEntryById 
+} from '../controllers/leaderboardController.js';
+import { validateLeaderboardEntryCreation, validateLeaderboardEntryUpdate } from '../middleware/validationMiddleware.js';
+import { handleErrors } from '../middleware/errorMiddleware.js';
 
-import { getLeaderboardEntryById } from "../controllers/leaderboardController.js";
-import { createLeaderboardEntry } from "../controllers/leaderboardController.js";
-import { deleteLeaderboardEntryById } from "../controllers/leaderboardController.js";
-import { updateLeaderboardEntryById } from "../controllers/leaderboardController.js";
-import { getAllLeaderboardEntries } from "../controllers/leaderboardController.js";
+const router = Router();
+
 // GET all leaderboard entries
-router.get('/get', getAllLeaderboardEntries);
+router.get('/get', handleErrors(getAllLeaderboardEntries));
 
 // GET a leaderboard entry by ID
-router.get('/get/:id', getLeaderboardEntryById);
+router.get('/get/:id', handleErrors(getLeaderboardEntryById));
 
 // POST a new leaderboard entry
-router.post('/create', createLeaderboardEntry);
+router.post('/create', validateLeaderboardEntryCreation, handleErrors(createLeaderboardEntry));
 
 // PUT (update) a leaderboard entry by ID
-router.put('/update/:id', updateLeaderboardEntryById);
+router.put('/update/:id', validateLeaderboardEntryUpdate, handleErrors(updateLeaderboardEntryById));
 
 // DELETE a leaderboard entry by ID
-router.delete('/delete/:id', deleteLeaderboardEntryById);
+router.delete('/delete/:id', handleErrors(deleteLeaderboardEntryById));
 
 export default router;

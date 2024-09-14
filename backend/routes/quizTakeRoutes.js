@@ -1,22 +1,29 @@
-import {Router} from "express";
+import { Router } from 'express';
+import { 
+    getAllQuizTakes, 
+    createQuizTake, 
+    getQuizTakeById, 
+    updateQuizTakeById, 
+    deleteQuizTakeById 
+} from '../controllers/quizTakeController.js';
+import { validateQuizTakeCreation, validateQuizTakeUpdate } from '../middleware/validationMiddleware.js';
+import { handleErrors } from '../middleware/errorMiddleware.js';
+
 const router = Router();
-//import QuizTake from '../models/quiz_takesModel.js';
-import { getAllQuizTakes } from '../controllers/quizTakeController.js';
-import { createQuizTake } from '../controllers/quizTakeController.js';
-import { getQuizTakeById } from '../controllers/quizTakeController.js';
-import { updateQuizTakeById } from "../controllers/quizTakeController.js";
-import { deleteQuizTakeById } from "../controllers/quizTakeController.js";
+
 // GET all quiz takes
-router.get('/get', getAllQuizTakes);
-router.get('/get/:id', getQuizTakeById);
+router.get('/get', handleErrors(getAllQuizTakes));
+
+// GET a quiz take by ID
+router.get('/get/:id', handleErrors(getQuizTakeById));
 
 // POST a new quiz take
-router.post('/create', createQuizTake);
+router.post('/create', validateQuizTakeCreation, handleErrors(createQuizTake));
 
 // PUT (update) a quiz take by ID
-router.put('/update/:id', updateQuizTakeById);
+router.put('/update/:id', validateQuizTakeUpdate, handleErrors(updateQuizTakeById));
 
 // DELETE a quiz take by ID
-router.delete('/delete/:id',deleteQuizTakeById);
+router.delete('/delete/:id', handleErrors(deleteQuizTakeById));
 
 export default router;
