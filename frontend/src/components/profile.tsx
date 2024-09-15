@@ -92,7 +92,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Account Created</Label>
+                  <Label htmlFor={''}>Account Created</Label>
                   <div className="text-sm text-gray-500">
                     {new Date(mockUserProfile.createdAt).toLocaleDateString()}
                   </div>

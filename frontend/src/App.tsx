@@ -5,6 +5,7 @@ import LeaderboardPage from './components/leaderboard.tsx';
 import QuizzesPage from './components/quizzes.tsx'; // Ensure QuizzesPage is imported correctly
 import AnalyticsPage from './components/analytics.tsx';
 import ProfilePage from './components/profile.tsx';
+import { LoginSignupPage } from './components/auth.tsx';
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <Route path="/quizzes" element={<QuizzesPage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path = '/auth' element ={<LoginSignupPage/>} />    
             </Routes>
         </Router>
     );

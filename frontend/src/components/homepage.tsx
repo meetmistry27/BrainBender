@@ -13,7 +13,8 @@ export default function HomePage() {
     { name: 'Home', path: '/' },
     { name: 'Quizzes', path: '/quizzes' },
     { name: 'Analytics', path: '/analytics' },
-    { name: 'Profile', path: '/profile' }
+    { name: 'Profile', path: '/profile' },
+    { name: 'Login', path: '/auth'}
   ];
 
   return (
