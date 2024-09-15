@@ -6,10 +6,14 @@ import quizTakeRoutes from './routes/quizTakeRoutes.ts';
 import leaderboardRoutes from './routes/leaderboardRoutes.ts';
 import analyticsRoutes from './routes/analyticsRoutes.ts';
 import { handleErrors } from "./middleware/errorMiddleware.ts";
+import cors from 'cors';
 
 // Create an instance of the express application
 const app = express();
 
+app.use(cors({
+    origin: 'http://localhost:3000' // or the URL of your frontend
+}));
 // Middleware to parse JSON
 app.use(express.json());
 

@@ -1,34 +1,23 @@
-// const mongoose = require('mongoose');
-import mongoose, { model } from 'mongoose';
+// models/usersModel.ts
+import { Document, model, Schema } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
-    // user_id: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     default: () => new mongoose.Types.ObjectId(),
-    //     index: true,
-    // },
-    name: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password_hash: {
-        type: String,
-        required: true,
-    },
-    google_id: {
-        type: String,
-    },
-    otp: {
-        type: String,
-    }
+// Define the IUser interface
+interface IUser extends Document {
+    name: string;
+    email: string;
+    password_hash: string; // or whatever the field for the password is
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// Define the user schema
+const userSchema = new Schema<IUser>({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password_hash: { type: String, required: true },
 }, { timestamps: true });
 
-//module.exports = mongoose.model('User', UserSchema) ;
-//export default mongoose.model('User', UserSchema);
-const User = mongoose.model('User', UserSchema);
+// Create the User model
+const User = model<IUser>('User', userSchema);
 export default User;
+export type { IUser }; // Export the IUser interface

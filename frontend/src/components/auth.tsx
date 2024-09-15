@@ -1,28 +1,113 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card.tsx"
-import { Button } from "../components/ui/button.tsx"
-import { Input } from "../components/ui/input.tsx"
-import { Label } from "../components/ui/label.tsx"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs.tsx"
-import { Checkbox } from "../components/ui/checkbox.tsx"
-import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // For making API requests
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card.tsx";
+import { Button } from "../components/ui/button.tsx";
+import { Input } from "../components/ui/input.tsx";
+import { Label } from "../components/ui/label.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs.tsx";
+import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export function LoginSignupPage() {
-  const navigate = useNavigate()
-  const [showPassword, setShowPassword] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      navigate('/dashboard')
-    }, 2000)
-  }
+  // Separate loading states for login and signup
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
+  const [isSignupLoading, setIsSignupLoading] = React.useState(false);
+
+  // State to store feedback message
+  const [signupMessage, setSignupMessage] = React.useState<string | null>(null);
+  const [loginMessage, setLoginMessage] = React.useState<string | null>(null);
+
+  // Separate states for login and signup
+  const [loginData, setLoginData] = React.useState({
+    email: '',
+    password: ''
+  });
+
+  const [signupData, setSignupData] = React.useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  const [activeTab, setActiveTab] = React.useState('login'); // track active tab
+
+  // Handle input changes for login form
+  const handleLoginInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value }); // Use 'name' instead of 'id'
+  };
+
+  // Handle input changes for signup form
+  const handleSignupInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignupData({ ...signupData, [e.target.name]: e.target.value }); // Use 'name' instead of 'id'
+  };
+
+  // Submit login
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoginLoading(true); // Set loading for login only
+
+    try {
+      // Call login API
+      const response = await axios.post('http://localhost:5000/users/login', {
+        email: loginData.email,
+        password: loginData.password
+      });
+
+      // Store JWT in localStorage and navigate
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+        navigate('/profile'); // Redirect to dashboard after login
+      }
+    } catch (error) {
+      console.error("Error during login", error);
+      setLoginMessage('Login failed. Please try again.');
+    } finally {
+      setIsLoginLoading(false); // Stop loading for login
+    }
+  };
+
+  // Submit signup
+  const handleSignupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSignupLoading(true);
+    setSignupMessage(null); // Reset message
+
+    try {
+        const response = await axios.post('http://localhost:5000/users/register', {
+            name: signupData.name,
+            email: signupData.email,
+            password: signupData.password
+        });
+
+        // Check if response status is 201 for success
+        if (response.status === 201) {
+            setSignupMessage('Account created successfully!');
+            setTimeout(() => {
+                navigate('/profile');
+            }, 1000); // Wait 1 second before redirecting
+        } else {
+            setSignupMessage('Signup failed. Please try again.');
+        }
+    } catch (error) {
+        // Log the error details for better debugging
+        console.error('Error in signup:', error);
+
+        // Check if there's an error response from the server
+        if (axios.isAxiosError(error) && error.response) {
+            console.error('Server response error:', error.response.data);
+            setSignupMessage(`Signup failed: ${error.response.data.message || 'Unknown error'}`);
+        } else {
+            setSignupMessage('Signup failed. Please try again.');
+        }
+    } finally {
+        setIsSignupLoading(false); // Stop loading state
+    }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -37,30 +122,44 @@ export function LoginSignupPage() {
             <CardTitle className="text-2xl font-bold text-center">Welcome to QuizMaster</CardTitle>
             <CardDescription className="text-center">Enter your details to get started</CardDescription>
           </CardHeader>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
+
+            {/* Login Form */}
             <TabsContent value="login">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleLoginSubmit}>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="login-email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input id="email" type="email" placeholder="m@example.com" className="pl-9" required />
+                      <Input
+                        id="login-email"
+                        name="email" // Change to name
+                        type="email"
+                        placeholder="m@example.com"
+                        className="pl-9"
+                        required
+                        value={loginData.email}
+                        onChange={handleLoginInputChange}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="login-password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        id="password"
+                        id="login-password"
+                        name="password" // Change to name
                         type={showPassword ? "text" : "password"}
                         className="pl-9 pr-9"
                         required
+                        value={loginData.password}
+                        onChange={handleLoginInputChange}
                       />
                       <button
                         type="button"
@@ -71,49 +170,51 @@ export function LoginSignupPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="remember" />
-                    <label htmlFor="remember" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      Remember me
-                    </label>
-                  </div>
+                  {loginMessage && (
+                    <div className="text-red-500 text-sm">{loginMessage}</div>
+                  )}
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Logging in..." : "Login"}
-                  </Button>
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-                  <Button variant="outline" type="button" className="w-full">
-                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                      <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-                    </svg>
-                    Google
+                  <Button type="submit" className="w-full" disabled={isLoginLoading}>
+                    {isLoginLoading ? "Logging in..." : "Login"}
                   </Button>
                 </CardFooter>
               </form>
             </TabsContent>
+
+            {/* Signup Form */}
             <TabsContent value="signup">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSignupSubmit}>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="signup-name">Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input id="name" placeholder="John Doe" className="pl-9" required />
+                      <Input
+                        id="signup-name"
+                        name="name" // Change to name
+                        placeholder="John Doe"
+                        className="pl-9"
+                        required
+                        value={signupData.name}
+                        onChange={handleSignupInputChange}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input id="signup-email" type="email" placeholder="m@example.com" className="pl-9" required />
+                      <Input
+                        id="signup-email"
+                        name="email" // Change to name
+                        type="email"
+                        placeholder="m@example.com"
+                        className="pl-9"
+                        required
+                        value={signupData.email}
+                        onChange={handleSignupInputChange}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -122,9 +223,12 @@ export function LoginSignupPage() {
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="signup-password"
+                        name="password" // Change to name
                         type={showPassword ? "text" : "password"}
                         className="pl-9 pr-9"
                         required
+                        value={signupData.password}
+                        onChange={handleSignupInputChange}
                       />
                       <button
                         type="button"
@@ -135,30 +239,15 @@ export function LoginSignupPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" required />
-                    <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-                    </label>
-                  </div>
+                  {signupMessage && (
+                    <div className={`text-sm ${signupMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
+                      {signupMessage}
+                    </div>
+                  )}
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create account"}
-                  </Button>
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-                  <Button variant="outline" type="button" className="w-full">
-                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                      <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-                    </svg>
-                    Google
+                  <Button type="submit" className="w-full" disabled={isSignupLoading}>
+                    {isSignupLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </CardFooter>
               </form>
@@ -167,5 +256,5 @@ export function LoginSignupPage() {
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
