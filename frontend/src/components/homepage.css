@@ -227,3 +227,71 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
+
+/* Add this CSS to your homepage.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white; /* Set background to white */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+  width: 100%; /* Make sure it takes full width */
+  position: fixed; /* Fix it to the top */
+  top: 0; /* Align it to the top */
+  left: 0; /* Align it to the left */
+  z-index: 1000; /* Ensure it is above other content */
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links li {
+  margin: 0 1rem;
+}
+
+.nav-links.open {
+  display: block; /* This will be used for mobile */
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* Hide by default on mobile */
+    position: absolute;
+    top: 60px; /* Adjust according to your navbar height */
+    left: 0;
+    width: 100%;
+    background-color: white; /* Background for mobile menu */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for mobile */
+  }
+
+  .hamburger {
+    display: block; /* Show hamburger on mobile */
+  }
+
+  .nav-links.open {
+    display: block; /* Show nav links when open */
+  }
+
+  .nav-links li {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Optional styling for list items */
+  }
+}
+
+/* Additional styles for body content to avoid overlap with fixed navbar */
+body {
+  margin-top: 60px; /* Adjust according to your navbar height */
+}
+

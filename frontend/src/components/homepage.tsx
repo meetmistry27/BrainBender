@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from "./ui/button.tsx"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card.tsx"
-import { BookOpen, Trophy, BarChart2, PenTool } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from "../components/ui/button.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card.tsx";
+import { BookOpen, Trophy, BarChart2, PenTool, Menu, X } from 'lucide-react';
 import './homepage.css';
 
 export default function HomePage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Quizzes', path: '/quizzes' },
+    { name: 'Analytics', path: '/analytics' },
+    { name: 'Profile', path: '/profile' }
+  ];
+
   return (
     <div className="home-container">
       <nav className="navbar">
-        <motion.div 
+        <motion.div
           className="logo"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -17,15 +27,18 @@ export default function HomePage() {
         >
           QuizMaster
         </motion.div>
-        <ul className="nav-links">
-          {['Home', 'Leaderboard', 'Analytics', 'Profile'].map((item, index) => (
+        <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X /> : <Menu />}
+        </button>
+        <ul className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          {navItems.map((item, index) => (
             <motion.li
-              key={item}
+              key={item.name}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <a href={`#${item.toLowerCase()}`}>{item}</a>
+              <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.name}</Link>
             </motion.li>
           ))}
         </ul>
