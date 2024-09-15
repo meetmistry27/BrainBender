@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css'; // Import Tailwind CSS here
 import App from './App.tsx';
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './reportWebVitals.ts';
 
 const rootElement = document.getElementById('root');
 

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ES2017",
+    "module": "esnext",  // Change to 'esnext' for ESM
     "strict": true,
     "jsx": "react",
     "esModuleInterop": true,
@@ -10,8 +10,13 @@
     "baseUrl": "./src",
     "paths": {
       "@lib/*": ["lib/*"]
-    }
+    },
+    "outDir": "./dist",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["frontend/src/**/*.ts", "frontend/src/**/*.tsx","backend/controllers/**/*.ts","backend/models/**/*.ts","backend/routes/**/*.ts"],
   "exclude": ["node_modules"]
 }
