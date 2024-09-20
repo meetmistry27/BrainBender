@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card.tsx";
 import { BookOpen, Trophy, BarChart2, PenTool, Menu, X } from 'lucide-react';
 import './homepage.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,8 +15,14 @@ export default function HomePage() {
     { name: 'Quizzes', path: '/quizzes' },
     { name: 'Analytics', path: '/analytics' },
     { name: 'Profile', path: '/profile' },
-    { name: 'Login', path: '/auth'}
+    { name: 'Login', path: '/auth'},
+    { name: 'Logout', path:'/logout'}
   ];
+  const navigate = useNavigate();
+
+  const handleCreateQuiz = () => {
+    navigate('/create_quiz');
+  };
 
   return (
     <div className="home-container">
@@ -39,7 +46,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.name}</Link>
+              <Link to ={item.path} onClick={() => setIsMenuOpen(false)}>{item.name}</Link>
             </motion.li>
           ))}
         </ul>
@@ -72,7 +79,7 @@ export default function HomePage() {
             Ready for a Challenge?
           </motion.h2>
           <div className="quiz-buttons">
-            <Button variant="default" size="lg" className="create-quiz-btn">
+            <Button variant="default" size="lg" className="create-quiz-btn" onClick={handleCreateQuiz}>
               Create Quiz
             </Button>
             <Button variant="secondary" size="lg" className="take-quiz-btn">

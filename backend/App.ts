@@ -10,7 +10,6 @@ import cors from 'cors';
 
 // Create an instance of the express application
 const app = express();
-
 app.use(cors({
     origin: 'http://localhost:3000' // or the URL of your frontend
 }));

@@ -6,6 +6,9 @@ import QuizzesPage from './components/quizzes.tsx'; // Ensure QuizzesPage is imp
 import AnalyticsPage from './components/analytics.tsx';
 import ProfilePage from './components/profile.tsx';
 import { LoginSignupPage } from './components/auth.tsx';
+import CreateQuizPage from './components/create_quiz.tsx';
+import Logout from './components/logout.tsx';
+
 
 const App = () => {
     return (
@@ -16,7 +19,9 @@ const App = () => {
                 <Route path="/quizzes" element={<QuizzesPage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path = '/auth' element ={<LoginSignupPage/>} />    
+                <Route path = '/auth' element ={<LoginSignupPage/>} />  
+                <Route path = '/create_quiz' element ={<CreateQuizPage/>} />
+                <Route path = '/logout' element = { <Logout/> } />
             </Routes>
         </Router>
     );
