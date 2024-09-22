@@ -57,9 +57,9 @@ router.get('/get', handleErrors(getAllUsers));
 router.post('/create', validateUserCreation, handleErrors(createUser)); 
 
 // PUT (update) a user by ID
-router.put('/update/:id', validateUserUpdate, handleErrors(updateUserById));
+router.put('/update/:id', authenticateUser, validateUserUpdate, handleErrors(updateUserById));
 
 // DELETE a user by ID
-router.delete('/delete/:id', handleErrors(deleteUserById));
+router.delete('/delete/:id',authenticateUser, handleErrors(deleteUserById));
 
 export default router;
