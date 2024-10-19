@@ -15,17 +15,19 @@ const getAllQuizTakes = async (req: Request, res: Response): Promise<void> => {
 //get a quiz take by id.
 const getQuizTakeById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const quizTake = await QuizTake.findById(req.params.id);
+        const quizTake = await QuizTake.findById(req.params.id)
+            .populate('quiz_id')  // Populate quiz details
+            .populate('user_id');  // Populate user details
+
         if (!quizTake) {
             res.status(404).json({ message: 'Quiz take not found' });
             return;
         }
         res.json(quizTake);
-    } catch (err:any) {
+    } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
 };
-
 
 // import { Request, Response } from 'express';
 // import Quiz from '../models/quizModel'; // Assuming your Quiz model is named like this

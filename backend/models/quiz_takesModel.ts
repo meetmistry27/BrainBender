@@ -10,15 +10,15 @@ interface IQuizTake extends Document {
 }
 
 // Define the schema for QuizTake
-const QuizTakeSchema = new mongoose.Schema<IQuizTake>({
+const QuizTakeSchema = new mongoose.Schema<IQuizTake>( {
     quiz_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Quiz',
+        ref: 'Quiz',  // Ensure 'Quiz' model is defined
         required: true,
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'User',  // Ensure 'User' model is defined
         required: true,
     },
     score: {
