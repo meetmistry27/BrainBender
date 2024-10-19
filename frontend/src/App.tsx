@@ -8,6 +8,8 @@ import ProfilePage from './components/profile.tsx';
 import { LoginSignupPage } from './components/auth.tsx';
 import CreateQuizPage from './components/create_quiz.tsx';
 import Logout from './components/logout.tsx';
+import TakeQuizPage from './components/take-quiz.tsx';
+import QuizResultPage from './components/quiz_results.tsx';
 
 
 const App = () => {
@@ -22,6 +24,8 @@ const App = () => {
                 <Route path = '/auth' element ={<LoginSignupPage/>} />  
                 <Route path = '/create_quiz' element ={<CreateQuizPage/>} />
                 <Route path = '/logout' element = { <Logout/> } />
+                <Route path = '/takequiz/:quizId?' element = { <TakeQuizPage/> } />
+                <Route path = '/quiz-results/:quizTakeId?' element = { <QuizResultPage/> } />
             </Routes>
         </Router>
     );

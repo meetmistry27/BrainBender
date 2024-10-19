@@ -1,70 +1,110 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card.tsx"
-import { Button } from "../components/ui/button.tsx"
-import { Input } from "../components/ui/input.tsx"
-import { Label } from "../components/ui/label.tsx"
-import { Textarea } from "../components/ui/textarea.tsx"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select.tsx"
-import { Checkbox } from "../components/ui/checkbox.tsx"
-import { PlusCircle, Trash2 } from 'lucide-react'
-
+import React, { useState } from 'react';
+import axios from 'axios'; // Ensure axios is installed
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card.tsx";
+import { Button } from "../components/ui/button.tsx";
+import { Input } from "../components/ui/input.tsx";
+import { Label } from "../components/ui/label.tsx";
+import { Textarea } from "../components/ui/textarea.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select.tsx";
+import { Checkbox } from "../components/ui/checkbox.tsx";
+import { PlusCircle, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Question {
-  id: string
-  text: string
-  options: { id: string; text: string; isCorrect: boolean }[]
+  id: string;
+  text: string;
+  options: { id: string; text: string; isCorrect: boolean }[];
 }
 
 export default function CreateQuizPage() {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [difficulty, setDifficulty] = useState('')
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const addQuestion = () => {
     const newQuestion: Question = {
       id: Date.now().toString(),
       text: '',
-      options: [
-        { id: '1', text: '', isCorrect: false },
-        { id: '2', text: '', isCorrect: false },
-        { id: '3', text: '', isCorrect: false },
-        { id: '4', text: '', isCorrect: false },
-      ],
-    }
-    setQuestions([...questions, newQuestion])
-  }
+      options: Array.from({ length: 4 }, (_, i) => ({
+        id: (i + 1).toString(),
+        text: '',
+        isCorrect: false,
+      })),
+    };
+    setQuestions([...questions, newQuestion]);
+  };
 
   const updateQuestion = (id: string, text: string) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, text } : q))
-  }
+    setQuestions(questions.map(q => q.id === id ? { ...q, text } : q));
+  };
 
   const updateOption = (questionId: string, optionId: string, text: string) => {
     setQuestions(questions.map(q => 
       q.id === questionId 
         ? { ...q, options: q.options.map(o => o.id === optionId ? { ...o, text } : o) }
         : q
-    ))
-  }
+    ));
+  };
 
   const toggleCorrectOption = (questionId: string, optionId: string) => {
     setQuestions(questions.map(q => 
       q.id === questionId 
         ? { ...q, options: q.options.map(o => ({ ...o, isCorrect: o.id === optionId })) }
         : q
-    ))
-  }
+    ));
+  };
 
   const removeQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q.id !== id))
-  }
+    setQuestions(questions.filter(q => q.id !== id));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically send the quiz data to your backend
-    console.log({ title, description, difficulty, questions })
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+
+    const token = localStorage.getItem('authToken'); // Retrieve the token from localStorage
+
+    const quizData = {
+        title,
+        description,
+        difficulty_level: difficulty,
+        questions: questions.map(q => ({
+            question_text: q.text,
+            options: q.options.map(o => ({
+                option_text: o.text,
+                is_correct: o.isCorrect,
+            })),
+        })),
+        creator_id: token,
+    };
+
+    try {
+        const response = await axios.post('http://localhost:5000/quizzes/create', quizData); // Ensure correct API endpoint
+        setSuccess(true);
+        console.log('Quiz created:', response.data);
+        setTimeout(() => {
+          navigate('/quizzes');
+        }, 1000);
+    } catch (err: any) {
+        // Check if the error has a response (it could be a server error)
+        if (err.response) {
+            setError(`Error: ${err.response.data.message}`);
+        } else {
+            setError('Failed to create quiz. Please try again.');
+        }
+        console.error(err);
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -90,7 +130,7 @@ export default function CreateQuizPage() {
                 <Input 
                   id="title" 
                   value={title} 
-                  onChange={(e:any) => setTitle(e.target.value)} 
+                  onChange={(e) => setTitle(e.target.value)} 
                   placeholder="Enter quiz title" 
                   required 
                 />
@@ -100,7 +140,7 @@ export default function CreateQuizPage() {
                 <Textarea 
                   id="description" 
                   value={description} 
-                  onChange={(e:any) => setDescription(e.target.value)} 
+                  onChange={(e) => setDescription(e.target.value)} 
                   placeholder="Enter quiz description" 
                   required 
                 />
@@ -112,9 +152,9 @@ export default function CreateQuizPage() {
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
+                    <SelectItem value="Easy">Easy</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Hard">Hard</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -174,9 +214,13 @@ export default function CreateQuizPage() {
             <PlusCircle className="mr-2 h-4 w-4" /> Add Question
           </Button>
 
-          <Button type="submit" className="w-full">Create Quiz</Button>
+          {error && <div className="text-red-600">{error}</div>}
+          {success && <div className="text-green-600">Quiz created successfully!</div>}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Creating Quiz...' : 'Create Quiz'}
+          </Button>
         </form>
       </div>
     </div>
-  )
+  );
 }

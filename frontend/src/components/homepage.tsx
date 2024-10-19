@@ -23,7 +23,9 @@ export default function HomePage() {
   const handleCreateQuiz = () => {
     navigate('/create_quiz');
   };
-
+  const handleTakeQuiz = () => {
+    navigate('/quizzes');
+  };
   return (
     <div className="home-container">
       <nav className="navbar">
@@ -82,7 +84,7 @@ export default function HomePage() {
             <Button variant="default" size="lg" className="create-quiz-btn" onClick={handleCreateQuiz}>
               Create Quiz
             </Button>
-            <Button variant="secondary" size="lg" className="take-quiz-btn">
+            <Button variant="secondary" size="lg" className="take-quiz-btn" onClick={handleTakeQuiz}>
               Take Quiz
             </Button>
           </div>

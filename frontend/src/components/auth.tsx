@@ -320,6 +320,7 @@ export function LoginSignupPage() {
         
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('userId',response.data.user.id)
         //const { userName, userEmail } = response.data;
         localStorage.setItem('userName', response.data.user.name);
         localStorage.setItem('userEmail', response.data.user.email);

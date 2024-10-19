@@ -9,9 +9,9 @@ interface IOption extends Document {
 // Define an interface for Question
 interface IQuestion extends Document {
     question_text: string;
-    question_type: 'MCQ' | 'True/False' | 'Short Answer';
-    multimedia_url?: string; // Optional field
-    difficulty_level: number;
+    //question_type: 'MCQ' | 'True/False' | 'Short Answer';
+    //multimedia_url?: string; // Optional field
+    //ifficulty_level: number;
     options: IOption[];
 }
 
@@ -20,7 +20,10 @@ interface IQuiz extends Document {
     creator_id: mongoose.Types.ObjectId; // Reference to User
     title: string;
     description?: string; // Optional field
-    rating?: number; // Optional field
+    difficulty_level: 'Easy' | 'Medium' | 'Hard';
+        //     type: Number,
+        // 
+    //rating?: number; // Optional field
     questions: IQuestion[];
 }
 
@@ -42,19 +45,19 @@ const QuestionSchema = new mongoose.Schema<IQuestion>({
         type: String,
         required: true,
     },
-    question_type: {
-        type: String,
-        enum: ['MCQ', 'True/False', 'Short Answer'],
-        required: true,
-    },
-    multimedia_url: {
-        type: String,
-        required: false,
-    },
-    difficulty_level: {
-        type: Number,
-        required: true,
-    },
+    // question_type: {
+    //     type: String,
+    //     enum: ['MCQ', 'True/False', 'Short Answer'],
+    //     required: true,
+    // },
+    // multimedia_url: {
+    //     type: String,
+    //     required: false,
+    // },
+    // difficulty_level: {
+    //     type: Number,
+    //     required: true,
+    // },
     options: [OptionSchema]
 });
 
@@ -73,10 +76,15 @@ const QuizSchema = new mongoose.Schema<IQuiz>({
         type: String,
         required: false,
     },
-    rating: {
-        type: Number,
-        required: false,
-    },
+    // rating: {
+    //     type: Number,
+    //     required: false,
+    // },
+    difficulty_level: {
+           type: String,
+           enum: ['Easy','Medium','Hard'],
+             required: true,
+         },
     questions: [QuestionSchema]
 }, { timestamps: true });
 

@@ -3,8 +3,8 @@ import {
     getAllQuizzes, 
     getQuizById, 
     createQuiz, 
-    updateQuizById, 
-    deleteQuizById 
+    //updateQuizById, 
+    //deleteQuizById 
 } from "../controllers/quizController.ts";
 
 const router = Router();
@@ -19,9 +19,9 @@ router.get('/get/:id', getQuizById);
 router.post('/create', createQuiz);
 
 // PUT (update) a quiz by ID
-router.put('/update/:id', updateQuizById);
+//router.put('/update/:id', updateQuizById);
 
 // DELETE a quiz by ID
-router.delete('/delete/:id', deleteQuizById);
+//router.delete('/delete/:id', deleteQuizById);
 
 export default router;
